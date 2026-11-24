@@ -1,23 +1,44 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
-from typing import Optional, List
-
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI()
 
 
 class Item(BaseModel):
-    id: Optional[int] = None
-    name: str
-    price: float
+    id: int | None = None
+    name: str = Field(
+        ..., max_length=50, min_length=3, description='Название товара'
+    )
+    price: float = Field(..., gt=0, description='Цена товара')
     in_stock: bool
 
+    @field_validator('name')
+    @classmethod
+    def no_digits(cls, value: str) -> str:
+        if any(char.isdigit() for char in value):
+            raise ValueError('Имя товара не должно содержать цифры')
+        return value
 
-db: List[Item] = []
+
+db: list[Item] = []
 current_id = 1
 
 
-@app.get('/items', response_model=List[Item])
+@app.exception_handler(Exception)
+async def exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            'error': {
+                'code': 'internal_server_error',
+                'message': 'Упс! Что-то пошло не так. Мы уже чиним это!',
+            }
+        },
+    )
+
+
+@app.get('/items', response_model=list[Item])
 def get_items():
     return db
 
@@ -41,7 +62,7 @@ def create_item(item: Item):
 
 @app.put('/items/{item_id}', response_model=Item)
 def update_item(item_id: int, item: Item):
-    for index, item in enumerate(db):
+    for index, item in enumerate(db):  # noqa: PLR1704
         if item.id == item_id:
             db[index] = item
             return item

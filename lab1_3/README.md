@@ -31,3 +31,9 @@
 ![POST](screens/post.png)
 ![GET](screens/get.png)
 ![Not Found](screens/404.png)
+
+## Лабораторная 3
+
+![Ошибка 422](screens/422.png)
+![Успешное добавление](screens/201.png)
+

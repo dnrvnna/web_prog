@@ -20,3 +20,11 @@
 **/.tox/
 **/.nox/
 
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+
+**/alembic/__pycache__/
+
+**/.DS_Store
+Thumbs.db

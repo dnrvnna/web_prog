@@ -2,6 +2,21 @@
 **/.venv/
 **/__pycache__/
 **/*.pyc
+**/*.pyo
+**/*.pyd
+
 
 .env
 .env.*
+**/.env
+**/*.env.local
+
+**/.idea/
+**/.vscode/
+
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+**/.tox/
+**/.nox/
+
